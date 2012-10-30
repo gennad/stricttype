@@ -20,10 +20,8 @@ def check_base_type(arg, nested=False):
 
 def check_type(fn, *args, **kwargs):
     def wrapper(*args2, **kwargs2):
-        return_type = kwargs.pop('return_type', None)
-
+        Returns = kwargs.pop('Returns', None)
         map(check_base_type, args)
-
         msgs = []
 
         if len(args) != len(args2):
@@ -43,14 +41,14 @@ def check_type(fn, *args, **kwargs):
                 msgs.append('{arg} is not instance of `{expected_type}`, but `{actual_type}`'.format(arg=kwargs2[key], expected_type=kwargs[key].__name__, actual_type=type(kwargs2[key].__name__)))
 
         if not msgs:
-            if not return_type:
+            if not Returns:
                 return fn(*args2, **kwargs)
 
             ret_val = fn(*args2, **kwargs)
             try:
-                assert isinstance(ret_val, return_type) 
+                assert isinstance(ret_val, Returns) 
             except AssertionError:
-                msgs.append('{arg} is not instance of `{expected_type}`, but `{actual_type}`'.format(arg=ret_val, expected_type=return_type.__name__, actual_type=type(ret_val).__name__))
+                msgs.append('{arg} is not instance of `{expected_type}`, but `{actual_type}`'.format(arg=ret_val, expected_type=Returns.__name__, actual_type=type(ret_val).__name__))
                 print ' '.join(msgs)
 
     return wrapper
